@@ -1,31 +1,38 @@
-const express = require("express")
-const cors = require("cors")
-const mongoose = require("mongoose")
-const dotenv = require("dotenv")
-// const bodyParser = require("body-parser")
-const app = express()
-const Routes = require("./routes/route.js")
+const express = require("express");
+const cors = require("cors");
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+const app = express();
+const Routes = require("./routes/route.js");
 
-const PORT = process.env.PORT || 5000
-
+// Load environment variables
 dotenv.config();
 
-// app.use(bodyParser.json({ limit: '10mb', extended: true }))
-// app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }))
+// Port setup for Render / local
+const PORT = process.env.PORT || 5000;
 
-app.use(express.json({ limit: '10mb' }))
-app.use(cors())
+// Middleware
+app.use(express.json({ limit: "10mb" }));
+app.use(cors());
 
+// MongoDB Connection
 mongoose
-    .connect(process.env.MONGO_URL, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-    })
-    .then(console.log("Connected to MongoDB"))
-    .catch((err) => console.log("NOT CONNECTED TO NETWORK", err))
+  .connect(process.env.MONGO_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("✅ Connected to MongoDB"))
+  .catch((err) => console.log("❌ NOT CONNECTED TO DATABASE:", err));
 
-app.use('/', Routes);
+// Default route for root URL
+app.get("/", (req, res) => {
+  res.send("✅ School Management System Backend is Running Successfully on Render!");
+});
 
+// API routes
+app.use("/api", Routes);
+
+// Start Server
 app.listen(PORT, () => {
-    console.log(`Server started at port no. ${PORT}`)
-})
+  console.log(`🚀 Server started at port ${PORT}`);
+});
